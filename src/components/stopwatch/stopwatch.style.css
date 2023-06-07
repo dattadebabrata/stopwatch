@@ -110,3 +110,15 @@
         scale: 1;
     }
 }
+
+@media screen and (max-width: 768px){
+    .stopwatch-timer {
+        font-size: 96px;
+    }
+}
+
+@media screen and (max-width: 640px){
+    .stopwatch-timer {
+        font-size: 76px;
+    }
+}

@@ -10,6 +10,7 @@ th{
     color:#B4C6EF;
     text-transform: uppercase;
     position:relative;
+    font-size: 14px;
 }
 th::after{
     content: "";
@@ -23,10 +24,17 @@ th::after{
     transform-origin: bottom;
 }
 th,td{
-    padding: 7px;
+    padding: 7px 7px 7px 0;
+    text-align: left;
 }
 td{
     color:#93a2c6;
     font-size: 14px;
     font-weight: 500;
+}
+
+@media screen and (max-width: 420px){
+    th,td{
+        font-size: 12px;
+    }
 }
