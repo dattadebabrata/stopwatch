@@ -1,0 +1,32 @@
+table{
+    /*border: 1px solid white;*/
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px auto;
+}
+
+th{
+    /*border-bottom: 1px solid white;*/
+    color:#B4C6EF;
+    text-transform: uppercase;
+    position:relative;
+}
+th::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: white; /* or any other color */
+    transform: scaleY(0.2); /* or 0.1 */
+    transform-origin: bottom;
+}
+th,td{
+    padding: 7px;
+}
+td{
+    color:#93a2c6;
+    font-size: 14px;
+    font-weight: 500;
+}

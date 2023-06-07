@@ -1,15 +1,19 @@
-import {useState, useEffect} from "react"
-import './stopwatch.style.css'
+import {useState, useEffect} from "react";
+import './stopwatch.style.css';
+import Table from "../table/table.component";
+import {formatTime} from "../../utils/timeFormat";
+import {setLocalStorage,getLocalStorage,removeLocalStorage} from "../../utils/localStorage";
+
 
 const Timer = () => {
     //Stopwatch states;
-    const [time, setTime] = useState(0);
+    const [time, setTime] = useState(getLocalStorage("time")||0);
     const [isRunning, setIsRunning] = useState(false);
     const [startTime, setStartTime] = useState(0);
     //Laps states;
-    const [lapTime, setLapTime] = useState(0);
+    const [lapTime, setLapTime] = useState(getLocalStorage('lapTime')||0);
     const [startLapTime, setStartLapTime] = useState(0);
-    const [lapsList, setLapsList] = useState([]);
+    const [lapsList, setLapsList] = useState(getLocalStorage('lapLists')||[]);
 
 
     useEffect(() => {
@@ -18,9 +22,11 @@ const Timer = () => {
             interval = setInterval(() => {
                 const elapsedTime = Date.now() - startTime;
                 setTime(elapsedTime);
+                setLocalStorage('time', elapsedTime);
 
                 const elapsedLapTime = Date.now() - startLapTime;
                 setLapTime(elapsedLapTime);
+                setLocalStorage('lapTime', elapsedLapTime);
                 // console.log("duration", elapsedLapTime)
                 // console.log("lap time", lapTime)
                 // console.log("startLap time", startLapTime)
@@ -28,15 +34,6 @@ const Timer = () => {
         }
         return () => clearInterval(interval);
     }, [isRunning, startTime, startLapTime]);
-
-    const formatTime = (timeInMilliseconds) => {
-        const ms = String(Math.floor(timeInMilliseconds % 1000)).padStart(3, '0').charAt(0);
-        const seconds = String(Math.floor((timeInMilliseconds / 1000) % 60)).padStart(2, '0');
-        const minutes = String(Math.floor((timeInMilliseconds / 1000 / 60) % 60)).padStart(2, '0');
-        const hours = String(Math.floor((timeInMilliseconds / 1000 / 3600) % 24)).padStart(2, '0');
-        // return `${hours}:${minutes}:${seconds}:${ms}`;
-        return [hours, minutes, seconds, ms];
-    };
 
     const handleStartPause = () => {
         if (isRunning) {
@@ -53,12 +50,14 @@ const Timer = () => {
     const handleLapReset = () => {
         // Running=Lap|not running= Reset;
         setLapTime(0);
+        removeLocalStorage('lapTime');
         setStartLapTime(Date.now() - 0);
         if (!isRunning) {
             setIsRunning(false);
             setTime(0);
+            removeLocalStorage('time');
         } else {
-            console.log("LAP", formatTime(time)) // elapsed time;
+            // console.log("LAP", formatTime(time)) // elapsed time;
             // console.log("duration inside function", formatTime(Date.now() - startLapTime)) //Duration;
             // console.log(new Date(Date.now()).toLocaleTimeString());
             // console.log(new Date(Date.now()).toLocaleTimeString('en-IN', {
@@ -70,8 +69,8 @@ const Timer = () => {
             // console.log(new Date(Date.now()).toLocaleDateString());
 
             const newLap = {
-                lapTime: formatTime(Date.now() - startLapTime).join(':'),
-                elapsedTime: formatTime(time).join(":"),
+                lapTime: `${formatTime(Date.now() - startLapTime).slice(0, 3).join(':')}.${formatTime(Date.now() - startLapTime).slice(3)}`,
+                elapsedTime: `${formatTime(time).slice(0, 3).join(":")}.${formatTime(time).slice(3)}`,
                 date: new Date(Date.now()).toLocaleDateString(),
                 time: new Date(Date.now()).toLocaleTimeString('en-IN', {
                     hour: 'numeric',
@@ -80,21 +79,23 @@ const Timer = () => {
                 }),
             };
             setLapsList([...lapsList, newLap]);
+            setLocalStorage("lapLists",[...lapsList, newLap]);
         }
 
     };
 
     const handleClearLap = () => {
         setLapsList([]);
+        removeLocalStorage('lapLists');
     }
 
-    useEffect(()=>{
-        if(time){
-            window.document.title = formatTime(time).slice(0, 3).join(":")+" | Stopwatch";
-        }else{
+    useEffect(() => {
+        if (time) {
+            window.document.title = formatTime(time).slice(0, 3).join(":") + " | Stopwatch";
+        } else {
             window.document.title = "Stopwatch";
         }
-    },[formatTime(time).slice(0, 3).join(":")]);
+    }, [formatTime(time).slice(0, 3).join(":")]);
 
 
     return (
@@ -109,39 +110,25 @@ const Timer = () => {
                 <span className={"lap-miliseconds"}>{formatTime(lapTime).slice(3)}</span>
             </h4>
             <div className="button-container">
-                <button
-                    className={`${isRunning ? "pause-button" : time > 0 ? "continue-button" : "start-button"} button`}
-                    onClick={handleStartPause}>
-                    {isRunning ? 'Pause' : time > 0 ? "Continue" : 'Start'}
-                </button>
-                {time > 0 && <button className={`${isRunning ? "lap-button" : "reset-button"} button`}
-                                     onClick={handleLapReset}>{isRunning ? 'Lap' : 'Reset'}</button>}
+                <button onClick={handleStartPause} className={`${isRunning || time>0?"hidden":""} start-button button`}>Start</button>
+                <button onClick={handleStartPause} className={`${isRunning?"":"hidden"} pause-button button`}>Pause</button>
+                <button onClick={handleStartPause} className={`${time>0 && !isRunning?"":"hidden"} continue-button button`}>Continue</button>
+                <button onClick={handleLapReset} className={`${isRunning?"":"hidden"} lap-button button`}>Lap</button>
+                <button onClick={handleLapReset} className={`${time>0 && !isRunning?"":"hidden"} reset-button button`}>Reset</button>
+                {/*<button*/}
+                {/*    className={`${isRunning ? "pause-button" : time > 0 ? "continue-button" : "start-button"} button`}*/}
+                {/*    onClick={handleStartPause}>*/}
+                {/*    {isRunning ? 'Pause' : time > 0 ? "Continue" : 'Start'}*/}
+                {/*</button>*/}
+                {/*{time > 0 && <button className={`${isRunning ? "lap-button" : "reset-button"} button`}*/}
+                {/*                     onClick={handleLapReset}>{isRunning ? 'Lap' : 'Reset'}</button>}*/}
             </div>
             {
                 lapsList.length > 0 &&
                 <div>
                     <h2 className={"stopwatch-data-title"}>StopWatch Data</h2>
                     {/*table*/}
-                    <table className={"lap-table"}>
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Lap Time</th>
-                            <th>Elapsed Time</th>
-                            <th>Current Time</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {lapsList.map((lap, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{lap.lapTime}</td>
-                                <td>{lap.elapsedTime}</td>
-                                <td>{`${lap.date} - ${lap.time}`}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    <Table lapsList={lapsList}/>
                     {/*Lap table*/}
                     <div className="button-container">
                         <button className={"clear-button button"} onClick={handleClearLap}>Clear Data</button>
