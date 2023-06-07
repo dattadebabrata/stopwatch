@@ -34,7 +34,8 @@ const Timer = () => {
         const seconds = String(Math.floor((timeInMilliseconds / 1000) % 60)).padStart(2, '0');
         const minutes = String(Math.floor((timeInMilliseconds / 1000 / 60) % 60)).padStart(2, '0');
         const hours = String(Math.floor((timeInMilliseconds / 1000 / 3600) % 24)).padStart(2, '0');
-        return `${hours}:${minutes}:${seconds}:${ms}`;
+        // return `${hours}:${minutes}:${seconds}:${ms}`;
+        return [hours, minutes, seconds, ms];
     };
 
     const handleStartPause = () => {
@@ -69,8 +70,8 @@ const Timer = () => {
             // console.log(new Date(Date.now()).toLocaleDateString());
 
             const newLap = {
-                lapTime: formatTime(Date.now() - startLapTime),
-                elapsedTime: formatTime(time),
+                lapTime: formatTime(Date.now() - startLapTime).join(':'),
+                elapsedTime: formatTime(time).join(":"),
                 date: new Date(Date.now()).toLocaleDateString(),
                 time: new Date(Date.now()).toLocaleTimeString('en-IN', {
                     hour: 'numeric',
@@ -87,41 +88,66 @@ const Timer = () => {
         setLapsList([]);
     }
 
+    useEffect(()=>{
+        if(time){
+            window.document.title = formatTime(time).slice(0, 3).join(":")+" | Stopwatch";
+        }else{
+            window.document.title = "Stopwatch";
+        }
+    },[formatTime(time).slice(0, 3).join(":")]);
+
 
     return (
         <div>
-            <h1>Stopwatch</h1>
             {/*Timer counter*/}
-            <h2>{formatTime(time)}</h2>
-            <h4>{formatTime(lapTime)}</h4>
+            <h2 className={"stopwatch-timer"}>
+                {`${formatTime(time).slice(0, 3).join(":")}`}
+                <span className={"stopwatch-miliseconds"}>{formatTime(time).slice(3)}</span>
+            </h2>
+            <h4 className={"lap-timer"}>
+                {`${formatTime(lapTime).slice(0, 3).join(":")}`}
+                <span className={"lap-miliseconds"}>{formatTime(lapTime).slice(3)}</span>
+            </h4>
             <div className="button-container">
-                <button onClick={handleStartPause}>{isRunning ? 'Pause' : 'Start'}</button>
-                {time > 0 && <button onClick={handleLapReset}>{isRunning ? 'Lap' : 'Reset'}</button>}
+                <button
+                    className={`${isRunning ? "pause-button" : time > 0 ? "continue-button" : "start-button"} button`}
+                    onClick={handleStartPause}>
+                    {isRunning ? 'Pause' : time > 0 ? "Continue" : 'Start'}
+                </button>
+                {time > 0 && <button className={`${isRunning ? "lap-button" : "reset-button"} button`}
+                                     onClick={handleLapReset}>{isRunning ? 'Lap' : 'Reset'}</button>}
             </div>
-            {/*Lap table*/}
-            {lapsList.length > 0 && <table className={"lap-table"}>
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Lap Time</th>
-                    <th>Elapsed Time</th>
-                    <th>Current Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                {lapsList.map((lap, index) => (
-                    <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{lap.lapTime}</td>
-                        <td>{lap.elapsedTime}</td>
-                        <td>{`${lap.date} - ${lap.time}`}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>}
-            <div className="clear-button">
-                <button onClick={handleClearLap}>Clear Data</button>
-            </div>
+            {
+                lapsList.length > 0 &&
+                <div>
+                    <h2 className={"stopwatch-data-title"}>StopWatch Data</h2>
+                    {/*table*/}
+                    <table className={"lap-table"}>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Lap Time</th>
+                            <th>Elapsed Time</th>
+                            <th>Current Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {lapsList.map((lap, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{lap.lapTime}</td>
+                                <td>{lap.elapsedTime}</td>
+                                <td>{`${lap.date} - ${lap.time}`}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    {/*Lap table*/}
+                    <div className="button-container">
+                        <button className={"clear-button button"} onClick={handleClearLap}>Clear Data</button>
+                    </div>
+                </div>
+            }
         </div>
     );
 }

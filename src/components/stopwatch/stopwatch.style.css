@@ -1,0 +1,115 @@
+.stopwatch-timer{
+    color: #b4c6ef;
+    font-size: 128px;
+    font-weight: 400;
+    margin-top: 90px;
+}
+.stopwatch-miliseconds{
+    color: #b4c6ef;
+    font-size: 30px;
+}
+
+.lap-timer{
+    color: #2dd4bf;
+    font-size: 24px;
+    font-weight: 500;
+    margin: -10px 0 30px 0;
+}
+.lap-miliseconds{
+    font-size: 14px;
+}
+
+.start-button{
+    background-color:#38bdf7;
+    animation: bubble 0.5s ease-in-out;
+
+}
+.start-button:hover{
+    background-color: #38bdf7;
+}
+.pause-button{
+    background-color: #f4bf51;
+    animation: bubble 0.5s ease-in-out;
+
+}
+.continue-button{
+    background-color: #2DD4bf;
+}
+.reset-button{
+    background-color: #fb7085;
+    animation: bubble 0.5s ease-in-out;
+
+}
+.clear-button{
+    background-color: transparent;
+    border: 1px solid #fb7085 !important;
+    color: #fb7085 !important;
+}
+.clear-button:hover{
+    background-color: #fb7085;
+    color:black !important;
+}
+.lap-button{
+    background-color: #818cf8;
+    animation: bubble 0.5s ease-in-out;
+
+}
+
+.button-container{
+    /*border: 1px solid white;*/
+    /*width: 528px;*/
+    margin: 10px auto;
+    display: flex;
+    gap: 10px;
+}
+
+.button{
+    width: 100%;
+    height: 48px;
+    border-radius: 7px;
+    padding: 0 16px;
+    font-size: 14px;
+    text-transform: uppercase;
+    border:none;
+    font-weight: bold;
+    cursor:pointer;
+}
+/*.button:active{*/
+/*    animation: bubble 0.5s ease-in-out;*/
+/*}*/
+
+.stopwatch-data-title{
+    text-align: left;
+    color:#B4C6EF;
+    margin: 30px 0;
+}
+
+table{
+    /*border: 1px solid white;*/
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px auto;
+}
+
+th{
+    border-bottom: 1px solid white;
+    color:#B4C6EF;
+    text-transform: uppercase;
+}
+th,td{
+    padding: 7px;
+}
+td{
+    color:#93a2c6;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@keyframes bubble {
+    0% {
+        scale: 0.90;
+    }
+    100% {
+        scale: 1;
+    }
+}
