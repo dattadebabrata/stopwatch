@@ -1,8 +1,14 @@
 .stopwatch-timer {
     color: #b4c6ef;
-    font-size: 128px;
+    font-size: 100px;
     font-weight: 400;
     margin-top: 90px;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+}
+.stopwatch-timer,.lap-timer {
+    font-family: 'Orbitron', sans-serif;
+
 }
 
 .stopwatch-miliseconds {
@@ -112,13 +118,19 @@
 }
 
 @media screen and (max-width: 768px){
-    .stopwatch-timer {
-        font-size: 96px;
+    .lap-timer{
+        margin:0 0 30px 0;
     }
 }
 
 @media screen and (max-width: 640px){
     .stopwatch-timer {
-        font-size: 76px;
+        font-size: 65px;
+    }
+}
+
+@media screen and (max-width: 420px){
+    .stopwatch-timer {
+        font-size: 40px;
     }
 }
